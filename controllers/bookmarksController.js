@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Fruit = require('../models/Bookmark');
+const Bookmark = require('../models/Bookmark');
 
 // Index
 router.get('/', async (req, res) => {
@@ -47,10 +47,10 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.get('/ByName/:name', async (req, res) => {
+router.get('/ByTitle/:title', async (req, res) => {
   try {
-    const foundBookmark = await Bookmark.findOne({ name: req.params.name });
-    res.status(200).json(foundFruit)
+    const foundBookmark = await Bookmark.findOne({ name: req.params.title });
+    res.status(200).json(foundBookmark)
   } catch (err) {
     res.status(400).json({
       msg: error.message

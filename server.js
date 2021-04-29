@@ -26,6 +26,8 @@ mongoose.connection.once('connected', () => {
   console.log('Connected to Mongo Life is good')
 })
 
+app.use('/bookmarks', require('./controllers/bookmarksController'))
+
 app.use('/', (req, res) => {
   res.send(`<h1>Hello World</h1>`)
 });
