@@ -23,6 +23,19 @@ router.get('/', async (req, res) => {
   }
 });
 
+// index #2
+// router.get('/', async (req, res) => {
+//   try {
+//     const foundBookmarks = await Bookmark.find({});
+//     res.status(200).json(foundBookmarks)
+//   } catch (err) {
+//     res.status(400).json({
+//       msg: err.message
+//     })
+    
+//   }
+// })
+
 // Create
 router.post('/', async (req, res) => {
   try {
