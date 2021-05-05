@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-// const { hash, jsonAuth, auth } = require('./controllers/authController');
+const { hash, jsonAuth, auth } = require('./controllers/authController');
 const SECRET = process.env.SECRET_KEY;
 const User = require('./models/User')
 
@@ -24,7 +24,7 @@ mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
   useCreateIndex: true,
-  useFindAndModify: true
+  useFindAndModify: false
 });
 
 mongoose.connection.once('connected', () => {
@@ -34,7 +34,7 @@ mongoose.connection.once('connected', () => {
 app.use('/bookmarks', require('./controllers/bookmarksController'))
 app.use('/users', require('./controllers/usersController'))
 
-app.use('/', (req, res) => {
+app.get('/', (req, res) => {
   res.send(`<h1>Hello World</h1>`)
 });
 
@@ -64,5 +64,31 @@ app.post('/login', (req, res) => {
     }
   })
 })
+
+// register
+app.post('/register', (req, res) => {
+  const passwordHash = hash(req.body.password)
+  req.body.password = bcrypt.hashSync(passwordHash, bcrypt.genSaltSync(10))
+  req.body.username = req.body.username.toLowerCase()
+  console.log(req.body)
+
+  User.create(req.body, (err, createdUser) => {
+    if(err){
+      console.log(err)
+      res.status(400).json({
+        msg: err.message
+      })
+    } else {
+      const token = jwt.sign({
+        id: createdUser._id,
+        username: createdUser.username
+      }, SECRET)
+      res.status(200).json({
+        token
+      })
+    }
+  })
+})
+
 
 app.listen(PORT, () => console.log('Listening on port: ', PORT))

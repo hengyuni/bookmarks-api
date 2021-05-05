@@ -22,18 +22,45 @@ router.post('/addBookmarkToUser/', jsonAuth, (req, res) =>{
   console.log(res.locals)
   const bookmark = req.body
   const addBookmarkQuery = User.findOneAndUpdate({ username: res.locals.user }, { $addToSet: { bookmarks: bookmark._id }}, {new: true})
-  addFruitQuery.exec((err, updatedUser) => {
+  addBookmarkQuery.exec((err, updatedUser) => {
     if (err){
       res.status(400).json({
           msg: err.message
       })
     } else {
         res.status(200).json({
-          msg: `Updated ${res.locals.user} with ${fruit.name}`
+          msg: `Updated ${res.locals.user} with ${bookmark.name}`
       })
     }
   })
 });
+
+// add bookmark #2
+router.post('/addBookmark/:bookmark/:username', (req, res) => {
+  const bookmarkQuery = Bookmark.findOne({ name: req.params.bookmark })
+
+  bookmarkQuery.exec(( err, bookmark ) => {
+    if(err){
+      res.status(400).json({
+        msg: err.message
+      })
+    } else {
+      const addBookmarkQuery = User.findOneAndUpdate({ username: req.params.username }, { $addToSet: { bookmarks: bookmark._id}}, { new: true})
+      addBookmarkQuery.exec(( err, updatedUser ) => {
+        if(err){
+          res.status(400).json({
+            msg: err.message
+          })
+        } else {
+          console.log(updatedUser);
+          res.status(200).json({
+            msg: `Updated ${updatedUser.username} with the bookmark ${bookmark.name}`
+          })
+        }
+      })
+    }
+  })
+})
 
 // show bookmark
 router.get('/:username', auth, (req, res) => {

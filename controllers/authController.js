@@ -10,7 +10,7 @@ module.exports.hash = (password) => {
           .digest('hex')
           .split('')
           .reverse()
-          .join()
+          .join('')
     )
 }
 
